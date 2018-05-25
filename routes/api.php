@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,6 +11,22 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Categories
+Route::prefix('categories')->group(function () {
+    Route::get('/', 'Api\CategoryController@index');
+    Route::get('{category}', 'Api\CategoryController@show');
+    Route::post('/', 'Api\CategoryController@store');
+    Route::put('{category}', 'Api\CategoryController@update');
+    Route::delete('{category}', 'Api\CategoryController@destroy');
+});
+
+// Products
+Route::prefix('category')->group(function () {
+    Route::get('{category}/products', 'Api\ProductController@index');
+    Route::post('{category}/products', 'Api\ProductController@store');
+});
+Route::prefix('products')->group(function () {
+    Route::get('{product}', 'Api\ProductController@show');
+    Route::put('{product}', 'Api\ProductController@update');
+    Route::delete('{product}', 'Api\ProductController@destroy');
 });
