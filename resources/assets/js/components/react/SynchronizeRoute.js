@@ -10,15 +10,16 @@ import {
 export default class SynchronizeRoute extends Component {
     render() {
         const {
+            cat,
             component: Component,
             path,
-            remote,
+            vueAction,
         } = this.props;
         return (
             <Route
                 render={props => {
                     const shouldRedirect = props.match.url === props.location.pathname,
-                        pathname = remote ? path : props.location.pathname;
+                        pathname = vueAction ? path : props.location.pathname; // Подменяем, когда существует связь с VueJs
                     props.match.url = pathname;
                     return shouldRedirect ? (
                         <Redirect
@@ -28,7 +29,7 @@ export default class SynchronizeRoute extends Component {
                             }}
                         />
                     ) : (
-                        <Component {...props} />
+                        <Component {...props} cat={cat}/>
                     );
                 }}
             />

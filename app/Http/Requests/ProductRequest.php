@@ -30,7 +30,7 @@ class ProductRequest extends FormRequest
                 'string',
                 'nullable',
                 'max:255',
-                'regex:/http(s)*:\/\/.+..{2,3}\/.+/u',
+                'regex:/^[^?]*\.(jpg|jpeg|gif|png)/',
             ],
         ];
     }

@@ -1,18 +1,37 @@
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.4s ease-out;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.material-icons {
+  transition: all 0.4s ease-out;
+}
+
+.material-icons.open {
+  transform: rotate(90deg);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  max-height: 230px;
+  transition: all 0.4s ease-out;
+}
+
+.fade-enter,
+.fade-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
 .wrap {
   display: flex;
 }
 
-.wrap_list {
-  background: lightgray;
-  margin: 0 5rem 0 0;
-  padding: 0;
-}
-
-.wrap_category {
-
-}
-
-.wrap_category-list {
-  margin: 0;
-  padding: 0;
+.item.active {
+  background: #ffff00;
 }

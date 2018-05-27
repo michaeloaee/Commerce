@@ -1,33 +1,72 @@
 import React, {Component} from 'react'
 import {BrowserRouter as Router} from 'react-router-dom'
+import {Route} from 'react-router-dom'
 
-import Category from './Category'
 import SynchronizeRoute from './SynchronizeRoute'
+import Category from './Category'
+import ProductsList from './products/List'
+import ProductSingle from "./products/Single";
 
 export default class Master extends Component {
-    disableRemote() {
-        if (this.state.remote) {
-            this.setState({
-                remote: false,
-            });
+    constructor(props) {
+        super(props);
+        this.state = {
+            vueAction: false,
+        };
+    }
+
+    /**
+     * Отключаем связь с VueJs
+     */
+    disableVueAction() {
+        this.setState({
+            vueAction: false,
+        });
+    }
+
+    /**
+     * При прямом заходе на вложенную страницу категории, восстанавливаем ID
+     */
+    repairNestedRoute() {
+        this.setState({
+            categoryId: window.location.pathname.split('/').pop(),
+        });
+    }
+
+    componentWillMount() {
+        if (/\/category/.test(window.location.pathname)) {
+            this.repairNestedRoute();
         }
     }
 
     componentDidUpdate() {
-        this.disableRemote();
+        if (this.state.vueAction) {
+            this.disableVueAction();
+        }
     }
 
     render() {
-        let cat = (this.state || {}).categoryId,
-            remote = (this.state || {}).remote;
+        const cat = this.state.categoryId,
+            vueAction = this.state.vueAction;
         return (
             <Router>
-                {cat &&
-                <SynchronizeRoute
-                    component={Category}
-                    path={`/category/${cat}`}
-                    remote={remote}
-                />}
+                <div>
+                    {cat &&
+                    <SynchronizeRoute
+                        component={Category}
+                        path={`/category/${cat}`}
+                        cat={cat}
+                        vueAction={vueAction}
+                    />}
+                    {!cat &&
+                    <Route path={"/category"}
+                           render={(props) => <ProductsList {...props} cat={cat}/>}
+                    />}
+                    {!cat &&
+                    <Route path={"/product/:productId"}
+                           render={(props) => <ProductSingle {...props}/>}
+                    />}
+                </div>
             </Router>
         );
     }

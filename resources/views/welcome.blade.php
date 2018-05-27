@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<div>
+<div class="wrap">
     <div id="categories-menu">
         <categories-menu/>
     </div>

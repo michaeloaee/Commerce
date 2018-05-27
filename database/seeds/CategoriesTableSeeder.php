@@ -14,7 +14,7 @@ class CategoriesTableSeeder extends Seeder
     public function run()
     {
         $catLimit  = 5;
-        $prodLimit = 10;
+        $prodLimit = 5;
 
         foreach (['categories', 'products'] as $item) {
             DB::table($item)->delete();
@@ -22,23 +22,18 @@ class CategoriesTableSeeder extends Seeder
 
         factory(Category::class, $catLimit)->create()->each(function (Category $root) use ($prodLimit) {
 
-            /* @var Category $child1 */
-            $child1 = $root->children()
-                           ->save(factory(Category::class)->make());
-
-            /* @var Category $child2 */
-            $child2 = $child1->children()
-                             ->save(factory(Category::class)->make());
-
+            // Categories
             for ($i = 0; $i < $prodLimit; $i++) {
-                $root->products()
-                     ->save(factory(Product::class)->make());
 
-                $child1->products()
-                       ->save(factory(Product::class)->make());
+                /* @var Category $child1 */
+                $child1 = $root->children()
+                               ->save(factory(Category::class)->make());
 
-                $child2->products()
-                       ->save(factory(Product::class)->make());
+                // Products
+                for ($j = 0; $j < $prodLimit; $j++) {
+                    $child1->products()
+                           ->save(factory(Product::class)->make());
+                }
             }
 
             echo "- $root->name с товарами создана.\n";

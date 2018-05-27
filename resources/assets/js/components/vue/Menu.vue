@@ -1,29 +1,37 @@
 <template>
-    <ul class="wrap_list">
-        <li @click="click">Category 1</li>
-    </ul>
+
+    <transition name="fade">
+        <ul v-if="hasCategories" class="wrap_list">
+            <menu-item
+                    v-for="category in categories"
+                    :category="category"
+                    :key="category.id"
+                    :depth="1"
+            />
+        </ul>
+    </transition>
+
 </template>
 
 <script>
+    import {mapState} from 'vuex';
+    import MenuItem from './MenuItem'
+
     export default {
         name: "Menu",
-        data() {
-            return {
-                categoryId: 1,
+        components: {
+            MenuItem,
+        },
+        computed: {
+            ...mapState({
+                categories: state => state.categories,
+            }),
+            hasCategories() {
+                return this.categories.length;
             }
         },
         created() {
+            this.$store.dispatch('asyncGetCategories');
         },
-        methods: {
-            categorySynchronise() {
-                window.React.setState({
-                    categoryId: this.categoryId,
-                    remote: true,
-                });
-            },
-            click() {
-                this.categorySynchronise();
-            }
-        }
     }
 </script>

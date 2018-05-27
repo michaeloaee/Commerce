@@ -21,7 +21,10 @@ class CategoryController extends Controller
                          ->get();
 
         foreach ($roots as $root) {
-            $nodes[] = $root->getDescendantsAndSelf()->toHierarchy();
+            $chain   = $root->getDescendantsAndSelf()
+                            ->toHierarchy()
+                            ->toArray();
+            $nodes[] = $chain[key($chain)];
         }
 
         return $nodes;
