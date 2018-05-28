@@ -3748,6 +3748,7 @@ var Single = function (_Component) {
         key: 'close',
         value: function close() {
             this.props.history.goBack();
+            window.Vue.$children[0].synchroniseFromProduct();
         }
     }, {
         key: 'completed',
@@ -14968,7 +14969,7 @@ if (document.getElementById('app')) {
 
 if (document.getElementById('categories-menu')) {
     __WEBPACK_IMPORTED_MODULE_3_vue___default.a.component('categories-menu', __WEBPACK_IMPORTED_MODULE_4__components_vue_Menu___default.a);
-    new __WEBPACK_IMPORTED_MODULE_3_vue___default.a({
+    window.Vue = new __WEBPACK_IMPORTED_MODULE_3_vue___default.a({
         el: '#categories-menu',
         store: __WEBPACK_IMPORTED_MODULE_5__components_vue_store__["a" /* default */]
     });
@@ -39293,7 +39294,39 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
         }
     }),
     created: function created() {
-        this.$store.dispatch('asyncGetCategories');
+        var _this = this;
+
+        this.$store.dispatch('asyncGetCategories').then(function () {
+            if (/\/category/.test(window.location.pathname)) {
+                var categoryId = Number(window.location.pathname.split('/').pop());
+                _this.selectCategory(categoryId);
+                _this.openMenu(categoryId);
+            }
+        });
+    },
+
+    methods: {
+        selectCategory: function selectCategory(categoryId) {
+            this.$store.commit('selectCategory', {
+                id: categoryId
+            });
+        },
+        openMenu: function openMenu(categoryId) {
+            this.$store.commit('toggleMenu', {
+                id: categoryId
+            });
+        },
+        synchroniseFromProduct: function synchroniseFromProduct() {
+            var categoryId = Number(window.location.pathname.split('/').pop());
+            window.React.setState({
+                categoryId: categoryId,
+                vueAction: false
+            });
+            this.$store.commit('selectCategory', {
+                id: categoryId
+            });
+            this.openMenu(categoryId);
+        }
     }
 });
 
@@ -39357,7 +39390,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     },
     data: function data() {
         return {
-            open: false
+            open: false,
+            lft: [],
+            rgt: []
         };
     },
 
@@ -39367,24 +39402,58 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     computed: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["b" /* mapState */])({
         selected: function selected(state) {
             return state.selected;
+        },
+        lftList: function lftList(state) {
+            return state.lftList;
+        },
+        rgtList: function rgtList(state) {
+            return state.rgtList;
         }
     }), {
         hasChildren: function hasChildren() {
             return this.category.children && this.category.children.length;
         },
-        icon: function icon() {
-            return this.open ? 'keyboard_arrow_down' : 'keyboard_arrow_right';
-        },
         active: function active() {
             return this.category.id === this.selected;
+        },
+
+        // Открываем меню при заходе на страницу
+        opened: function opened() {
+            if (this.lft.length || this.rgt.length) {
+                this.open = this.category.rgt <= this.rgt[0] && this.category.rgt >= this.rgt[1] && this.category.lft >= this.lft[0] && this.category.lft <= this.lft[1];
+            }
         }
     }),
+    watch: {
+        // Временно сохраняем Lft в текущем scope, чтобы при клике не схлопнуть меню
+        lftList: function lftList() {
+            if (this.lftList.length) {
+                this.lft = this.lftList;
+            }
+        },
+
+        // Временно сохраняем Rgt в текущем scope, чтобы при клике не схлопнуть меню
+        rgtList: function rgtList() {
+            if (this.rgtList.length) {
+                this.rgt = this.rgtList;
+            }
+        }
+    },
     methods: {
         selectCategory: function selectCategory() {
             this.toggle();
-            this.synchronise();
+            this.synchroniseCategory();
+        },
+        resetBranch: function resetBranch() {
+            this.lft = [];
+            this.rgt = [];
+            this.$store.commit('resetMenu');
         },
         toggle: function toggle() {
+            // При клике сбрасываем branch, т.к. хранить состояние больше не нужно
+            if (this.lft.length || this.rgt.length) {
+                this.resetBranch();
+            }
             if (this.hasChildren) {
                 this.open = !this.open;
             } else {
@@ -39393,7 +39462,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 });
             }
         },
-        synchronise: function synchronise() {
+        synchroniseCategory: function synchroniseCategory() {
             if (this.depth > 1) {
                 window.React.setState({
                     categoryId: this.category.id,
@@ -39431,9 +39500,13 @@ var render = function() {
           _vm._v("\n        " + _vm._s(_vm.category.name) + "\n        "),
           _c("span", { staticClass: "icon has-text-info menu-icon" }, [
             _vm.hasChildren
-              ? _c("i", { class: ["material-icons", { open: _vm.open }] }, [
-                  _vm._v("keyboard_arrow_right")
-                ])
+              ? _c(
+                  "i",
+                  {
+                    class: ["material-icons", { open: _vm.open || _vm.opened }]
+                  },
+                  [_vm._v("keyboard_arrow_right")]
+                )
               : _vm._e()
           ])
         ]
@@ -39448,8 +39521,8 @@ var render = function() {
                   {
                     name: "show",
                     rawName: "v-show",
-                    value: _vm.open,
-                    expression: "open"
+                    value: _vm.open || _vm.opened,
+                    expression: "open || opened"
                   }
                 ],
                 staticClass: "wrap_list"
@@ -39530,22 +39603,27 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex
     namespaced: true,
     state: {
         categories: [],
-        selected: null
+        selected: null,
+        lftList: [],
+        rgtList: []
     },
     actions: {
         asyncGetCategories: function asyncGetCategories(_ref) {
             var commit = _ref.commit;
 
-            axios.get('/api/categories/').then(function (data) {
-                try {
-                    commit('saveCategories', {
-                        categories: data.data
-                    });
-                } catch (e) {
-                    console.log(data);
-                }
-            }).catch(function (error) {
-                console.log(error);
+            return new Promise(function (resolve) {
+                axios.get('/api/categories/').then(function (data) {
+                    try {
+                        commit('saveCategories', {
+                            categories: data.data
+                        });
+                    } catch (e) {
+                        console.log(data);
+                    }
+                    resolve();
+                }).catch(function (error) {
+                    console.log(error);
+                });
             });
         }
     },
@@ -39555,6 +39633,40 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex
         },
         selectCategory: function selectCategory(state, payload) {
             state.selected = payload.id;
+        },
+        resetMenu: function resetMenu(state) {
+            state.lftList = [];
+            state.rgtList = [];
+        },
+        toggleMenu: function toggleMenu(state, payload) {
+            var rootLft = void 0,
+                rootRgt = void 0,
+                childLft = void 0,
+                childRgt = void 0;
+            var iterate = function iterate(items) {
+                var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+                items.map(function (item) {
+                    if (item.id === payload.id) {
+                        childLft = item.lft;
+                        childRgt = item.rgt;
+                        throw true;
+                    }
+                    if (!depth) {
+                        rootLft = item.lft;
+                        rootRgt = item.rgt;
+                    }
+                    if (item.children.length) {
+                        iterate(item.children, depth + 1);
+                    }
+                });
+            };
+            try {
+                iterate(state.categories);
+            } catch (e) {
+                state.lftList = [rootLft, childLft];
+                state.rgtList = [rootRgt, childRgt];
+            }
         }
     }
 }));

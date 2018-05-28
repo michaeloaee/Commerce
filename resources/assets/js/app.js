@@ -14,7 +14,7 @@ if (document.getElementById('app')) {
 
 if (document.getElementById('categories-menu')) {
     Vue.component('categories-menu', Menu);
-    new Vue({
+    window.Vue = new Vue({
         el: '#categories-menu',
         store,
     });

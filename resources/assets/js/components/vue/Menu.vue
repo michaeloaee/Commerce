@@ -33,7 +33,36 @@
             }
         },
         created() {
-            this.$store.dispatch('asyncGetCategories');
+            this.$store.dispatch('asyncGetCategories').then(() => {
+                if (/\/category/.test(window.location.pathname)) {
+                    const categoryId = Number(window.location.pathname.split('/').pop());
+                    this.selectCategory(categoryId);
+                    this.openMenu(categoryId);
+                }
+            });
+        },
+        methods: {
+            selectCategory(categoryId) {
+                this.$store.commit('selectCategory', {
+                    id: categoryId,
+                });
+            },
+            openMenu(categoryId) {
+                this.$store.commit('toggleMenu', {
+                    id: categoryId,
+                });
+            },
+            synchroniseFromProduct() {
+                const categoryId = Number(window.location.pathname.split('/').pop());
+                window.React.setState({
+                    categoryId: categoryId,
+                    vueAction: false,
+                });
+                this.$store.commit('selectCategory', {
+                    id: categoryId,
+                });
+                this.openMenu(categoryId);
+            }
         },
     }
 </script>

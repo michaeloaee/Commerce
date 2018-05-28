@@ -12,6 +12,7 @@ export default class Single extends Component {
 
     close() {
         this.props.history.goBack();
+        window.Vue.$children[0].synchroniseFromProduct();
     }
 
     completed() {
