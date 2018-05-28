@@ -1,3 +1,4 @@
+/* Effects */
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.4s ease-out;
@@ -28,10 +29,25 @@
   opacity: 0;
 }
 
-.wrap {
+/* Generic */
+.left-menu {
+  background: $light;
+  padding: 1em;
+}
+
+.menu-list a {
+  align-items: center;
   display: flex;
 }
 
-.item.active {
-  background: #ffff00;
+.menu-list a:hover {
+  background: $grey-lighter;
+}
+
+.menu-icon {
+  margin-left: 0.4em;
+}
+
+.menu-list a.is-active {
+  background: $cyan;
 }

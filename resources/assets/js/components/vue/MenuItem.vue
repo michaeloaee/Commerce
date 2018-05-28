@@ -1,16 +1,17 @@
 <template>
     <li>
 
-        <div @click="selectCategory"
-             :class="['item', {active}]"
+        <a @click.prevent="selectCategory"
+           :class="['item', {'is-active': active}]"
+           href="#"
         >
             {{ category.name }}
-            <i v-if="hasChildren"
-               :class="['material-icons', {open}]"
-            >
-                keyboard_arrow_right
-            </i>
-        </div>
+            <span class="icon has-text-info menu-icon">
+                <i v-if="hasChildren"
+                   :class="['material-icons', {open}]"
+                >keyboard_arrow_right</i>
+            </span>
+        </a>
 
         <transition name="fade">
             <ul v-if="hasChildren"

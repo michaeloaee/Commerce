@@ -3,8 +3,8 @@ import {BrowserRouter as Router} from 'react-router-dom'
 import {Route} from 'react-router-dom'
 
 import SynchronizeRoute from './SynchronizeRoute'
-import Category from './Category'
-import ProductsList from './products/List'
+import Category from './category/Category'
+import ProductsList from './category/List'
 import ProductSingle from "./products/Single";
 
 export default class Master extends Component {

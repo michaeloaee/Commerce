@@ -10,12 +10,28 @@
 </head>
 <body>
 
-<div class="wrap">
-    <div id="categories-menu">
-        <categories-menu/>
+<main>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="{{ route('home') }}" class="navbar-item">{{ config('app.name') }}</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="section">
+        <div class="container">
+            <div class="columns">
+                <div id="categories-menu" class="column is-one-third">
+                    <categories-menu/>
+                </div>
+                <div id="app" class="column is-two-thirds"></div>
+            </div>
+        </div>
     </div>
-    <div id="app"></div>
-</div>
+
+</main>
 
 <script src="{{ asset('js/app.js') }}"></script>
 </body>

@@ -1,0 +1,28 @@
+.category-item {
+  display: flex;
+  opacity: 0;
+  transition: all 0.4s ease-in-out;
+}
+
+.category-item.complete {
+  opacity: 1;
+}
+
+.category-item .description {
+  color: $grey-dark;
+}
+
+.category-item .card-image {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+  justify-content: center;
+}
+
+.category-item .image img {
+  height: auto;
+  margin: 0 auto;
+  max-height: 200px;
+  width: auto;
+}

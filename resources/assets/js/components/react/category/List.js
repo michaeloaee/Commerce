@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-import {Link} from 'react-router-dom'
+
+import Item from './Item'
 
 export default class List extends Component {
     constructor(props) {
@@ -32,20 +33,8 @@ export default class List extends Component {
 
     render() {
         return (
-            <ul className="wrap_category-list">
-                {this.state.products.map(prod => (
-                    <li key={prod.id}>
-                        <Link to={{
-                            pathname: `/product/${prod.id}`,
-                            state: {product: prod}
-                        }}>
-
-                            <img src={prod.image} alt={prod.name}/>
-                            <div>{prod.name}</div>
-
-                        </Link>
-                    </li>
-                ))}
+            <ul className="columns is-multiline">
+                {this.state.products.map(prod => <Item key={prod.id} prod={prod}/>)}
             </ul>
         );
     }

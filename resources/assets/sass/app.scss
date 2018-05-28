@@ -2,5 +2,9 @@
 @import "~material-design-icons/iconfont/material-icons.css";
 // Variables
 @import "variables";
-// Styles
-@import "custom";
+// Style
+@import "~bulma/bulma";
+@import "general";
+@import "menu";
+@import "category";
+@import "product";

@@ -1,14 +1,16 @@
 <template>
 
     <transition name="fade">
-        <ul v-if="hasCategories" class="wrap_list">
-            <menu-item
-                    v-for="category in categories"
-                    :category="category"
-                    :key="category.id"
-                    :depth="1"
-            />
-        </ul>
+        <aside v-if="hasCategories" class="menu left-menu">
+            <ul class="menu-list">
+                <menu-item
+                        v-for="category in categories"
+                        :category="category"
+                        :key="category.id"
+                        :depth="1"
+                />
+            </ul>
+        </aside>
     </transition>
 
 </template>
