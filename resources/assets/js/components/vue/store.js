@@ -9,6 +9,7 @@ export default new Vuex.Store({
     state: {
         categories: [],
         selected: null,
+        hideMobileMenu: true,
         lftList: [],
         rgtList: [],
     },
@@ -76,6 +77,10 @@ export default new Vuex.Store({
                 state.lftList = [rootLft, childLft];
                 state.rgtList = [rootRgt, childRgt];
             }
+        },
+
+        toggleMobileMenu(state) {
+            state.hideMobileMenu = !state.hideMobileMenu;
         },
 
     },

@@ -112,6 +112,7 @@
                     this.$store.commit('selectCategory', {
                         id: this.category.id,
                     });
+                    this.$store.commit('toggleMobileMenu');
                 }
             },
             synchroniseCategory() {

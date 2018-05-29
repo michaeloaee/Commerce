@@ -1,8 +1,14 @@
 <template>
 
     <transition name="fade">
-        <aside v-if="hasCategories" class="menu left-menu">
-            <ul class="menu-list">
+        <aside v-if="hasCategories" class="menu is-mobile left-menu">
+
+            <!-- Mobile btn -->
+            <i class="material-icons mobile-menu-btn"
+               @click="toggleMobileMenu"
+            >menu</i>
+
+            <ul class="menu-list" :class="{hideMobileMenu}">
                 <menu-item
                         v-for="category in categories"
                         :category="category"
@@ -10,6 +16,7 @@
                         :depth="1"
                 />
             </ul>
+
         </aside>
     </transition>
 
@@ -27,6 +34,7 @@
         computed: {
             ...mapState({
                 categories: state => state.categories,
+                hideMobileMenu: state => state.hideMobileMenu,
             }),
             hasCategories() {
                 return this.categories.length;
@@ -52,8 +60,7 @@
                     id: categoryId,
                 });
             },
-            synchroniseFromProduct() {
-                const categoryId = Number(window.location.pathname.split('/').pop());
+            synchroniseFromProduct(categoryId) {
                 window.React.setState({
                     categoryId: categoryId,
                     vueAction: false,
@@ -62,7 +69,10 @@
                     id: categoryId,
                 });
                 this.openMenu(categoryId);
-            }
+            },
+            toggleMobileMenu() {
+                this.$store.commit('toggleMobileMenu');
+            },
         },
     }
 </script>

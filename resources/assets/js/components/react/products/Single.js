@@ -11,8 +11,10 @@ export default class Single extends Component {
     }
 
     close() {
+        const categoryId = this.props.history.location.state.product.category_id;
+        this.props.history.location.pathname = `/category/${categoryId}`; // Fix for Chrome
         this.props.history.goBack();
-        window.Vue.$children[0].synchroniseFromProduct();
+        window.Vue.$children[0].synchroniseFromProduct(categoryId);
     }
 
     completed() {
@@ -22,8 +24,11 @@ export default class Single extends Component {
     }
 
     render() {
-        const prod = this.props.location.state.product;
+        const prod = (this.props.location.state || {}).product;
         const completeClass = this.state.complete ? 'complete' : null;
+        if (!prod) {
+            return null;
+        }
         return (
             <div className="card">
                 <div className={`card-content product ${completeClass}`}>
